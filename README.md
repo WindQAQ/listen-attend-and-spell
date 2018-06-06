@@ -2,7 +2,7 @@
 
 ## Overview
 
-**listen-attend-and-spell** contains the implementation of *Listen, Attend and Spell* (LAS) model based on Tensorflow. In this project, the LAS model is trained via input pipeline and estimator API of Tensorflow, which makes the whole procedure truly end-to-end.
+**listen-attend-and-spell** contains the implementation of [*Listen, Attend and Spell*][las] (LAS) model based on Tensorflow. In this project, the LAS model is trained via input pipeline and estimator API of Tensorflow, which makes the whole procedure truly end-to-end.
 
 ## Usage
 
@@ -35,7 +35,7 @@ with tf.python_io.TFRecordWriter('data.tfrecords') as writer:
         writer.write(make_example(inputs, labels).SerializeToString())
 ```
 Note that it is no need to convert labels into index on your own! Just encode the string-like labels into bytes
-More deatils are available at https://github.com/tensorflow/magenta/blob/master/magenta/common/sequence_example_lib.py.
+More deatils are available at [sequence example][sequence_example].
 
 Moreover, you should create a vocabulary table containing all symbols in your training data. For more details,  please refer to `misc/timit-phone.table`.
 
@@ -50,6 +50,18 @@ The following figures show the results on TIMIT dataset (4620 training sentence 
 
 ![training curve](images/curve.png)
 
+## References
+
+- [Listen, Attend and spell][las]
+- [How to create TFRecord][sequence_example]
+- [nabu's implementation][nabu]
+- [Tensorflow official seq2seq code][nmt]
+
 ## Contact
 
 Issues and pull requests are welcomed. Feel free to [contact me](mailto:windqaq@gmail.com) if there's any problems.
+
+[nabu]: https://github.com/vrenkens/nabu
+[nmt]: https://github.com/tensorflow/nmt
+[las]: https://arxiv.org/pdf/1508.01211.pdf
+[sequence_example]: https://github.com/tensorflow/magenta/blob/master/magenta/common/sequence_example_lib.py
