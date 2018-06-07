@@ -63,14 +63,19 @@ def create_hparams(args, target_vocab_size, sos_id=1, eos_id=2):
     if os.path.exists(hparams_file):
         with open(hparams_file, 'r') as f:
             hparams_dict = json.loads(json.load(f))
+
+        for name, value in vars(args).items():
+            if name not in hparams_dict:
+                hparams_dict[name] = value
     else:
         hparams_dict = {
             **vars(args),
             **{'sos_id': sos_id, 'eos_id': eos_id, 'target_vocab_size': target_vocab_size},
         }
 
-    for name, value in hparams_dict.items():
-        if name in hparams and value is not None:
+    for name, value in hparams.values().items():
+        value = hparams_dict.get(name, None)
+        if value is not None:
             if name == 'mapping':
                 if not isinstance(value, list):
                     value = [int(x.strip()) for x in open(value, 'r')]
