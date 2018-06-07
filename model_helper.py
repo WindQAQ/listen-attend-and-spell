@@ -76,9 +76,15 @@ def las_model_fn(features,
 
     encoder_inputs = features['encoder_inputs']
     source_sequence_length = features['source_sequence_length']
-    decoder_inputs = labels['targets_inputs']
-    targets = labels['targets_outputs']
-    target_sequence_length = labels['target_sequence_length']
+
+    decoder_inputs = None
+    targets = None
+    target_sequence_length = None
+
+    if mode != tf.estimator.ModeKeys.PREDICT:
+        decoder_inputs = labels['targets_inputs']
+        targets = labels['targets_outputs']
+        target_sequence_length = labels['target_sequence_length']
 
     tf.logging.info('Building listener')
 
@@ -95,20 +101,23 @@ def las_model_fn(features,
             mode, params.decoder)
 
     with tf.name_scope('prediction'):
-        logits = decoder_outputs.rnn_output
-        class_ids = tf.cast(tf.argmax(logits, axis=-1), tf.int32)
+        if mode == tf.estimator.ModeKeys.PREDICT and params.decoder.beam_width > 0:
+            logits = tf.no_op()
+            sample_ids = decoder_outputs.predicted_ids
+        else:
+            logits = decoder_outputs.rnn_output
+            sample_ids = tf.to_int32(tf.argmax(logits, -1))
 
     if mode == tf.estimator.ModeKeys.PREDICT:
         predictions = {
-            'logits': logits,
-            'class_ids': class_ids,
+            'sample_ids': sample_ids,
         }
 
         return tf.estimator.EstimatorSpec(mode, predictions=predictions)
 
     with tf.name_scope('metrics'):
         edit_distance = utils.edit_distance(
-            class_ids, targets, utils.EOS_ID, params.mapping)
+            sample_ids, targets, utils.EOS_ID, params.mapping)
 
         metrics = {
             'edit_distance': tf.metrics.mean(edit_distance),
@@ -136,10 +145,10 @@ def las_model_fn(features,
         logging_hook = tf.train.LoggingTensorHook({
             'edit_distance': tf.reduce_mean(edit_distance),
             'max_edit_distance': tf.reduce_max(edit_distance),
-            'max_predictions': class_ids[tf.argmax(edit_distance)],
+            'max_predictions': sample_ids[tf.argmax(edit_distance)],
             'max_targets': targets[tf.argmax(edit_distance)],
             'min_edit_distance': tf.reduce_min(edit_distance),
-            'min_predictions': class_ids[tf.argmin(edit_distance)],
+            'min_predictions': sample_ids[tf.argmin(edit_distance)],
             'min_targets': targets[tf.argmin(edit_distance)],
         }, every_n_iter=10)
 
@@ -154,7 +163,7 @@ def las_model_fn(features,
         'loss': loss,
         'edit_distance': tf.reduce_mean(edit_distance),
         #'max_edit_distance': tf.reduce_max(edit_distance),
-        #'predictions': class_ids[tf.argmax(edit_distance)],
+        #'predictions': sample_ids[tf.argmax(edit_distance)],
         #'targets': targets[tf.argmax(edit_distance)],
     }, every_n_secs=10)
 

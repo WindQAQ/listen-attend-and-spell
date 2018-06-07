@@ -17,7 +17,7 @@ class HParams(tf.contrib.training.HParams):
     def pop_hparam(self, name):
         value = getattr(self, name)
         self.del_hparam(name)
-        
+
         return value
 
     def save_to_file(self, filename):
@@ -48,6 +48,7 @@ def get_default_hparams():
         pass_hidden_state=False,
         attention_type='luong',
         attention_layer_size=None,
+        beam_width=0,
 
         # evaluation setting
         mapping=None)
@@ -92,21 +93,21 @@ def get_encoder_decoder_hparams(hparams):
     mapping = hparams.pop_hparam('mapping')
 
     encoder_hparams = HParams(
-            num_layers=hparams.pop_hparam('encoder_layers'),
-            num_units=hparams.pop_hparam('encoder_units'),
-            use_pyramidal=hparams.pop_hparam('use_pyramidal'),
-            dropout=dropout)
+        num_layers=hparams.pop_hparam('encoder_layers'),
+        num_units=hparams.pop_hparam('encoder_units'),
+        use_pyramidal=hparams.pop_hparam('use_pyramidal'),
+        dropout=dropout)
 
     decoder_hparams = HParams(
-            num_layers=hparams.pop_hparam('decoder_layers'),
-            num_units=hparams.pop_hparam('decoder_units'),
-            dropout=dropout)
+        num_layers=hparams.pop_hparam('decoder_layers'),
+        num_units=hparams.pop_hparam('decoder_units'),
+        dropout=dropout)
 
     for name, value in hparams.values().items():
         decoder_hparams.add_hparam(name, value)
 
     return HParams(
-            learning_rate=learning_rate,
-            mapping=mapping,
-            encoder=encoder_hparams,
-            decoder=decoder_hparams)
+        learning_rate=learning_rate,
+        mapping=mapping,
+        encoder=encoder_hparams,
+        decoder=decoder_hparams)
