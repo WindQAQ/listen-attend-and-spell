@@ -62,8 +62,12 @@ def main(args):
             args.data, args.vocab, num_channels=args.num_channels, batch_size=args.batch_size, num_epochs=1),
         predict_keys='sample_ids')
 
-    predictions = [vocab_list[y['sample_ids']].tolist() + [utils.EOS]
-                   for y in predictions]
+    if args.beam_width > 0:
+        predictions = [vocab_list[y['sample_ids'][:, 0]].tolist() + [utils.EOS]
+                       for y in predictions]
+    else:
+        predictions = [vocab_list[y['sample_ids']].tolist() + [utils.EOS]
+                       for y in predictions]
 
     predictions = [' '.join(y[:y.index(utils.EOS)]) for y in predictions]
 
