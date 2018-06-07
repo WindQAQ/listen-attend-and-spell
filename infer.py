@@ -37,7 +37,7 @@ def input_fn(dataset_filename, vocab_filename, num_channels=39, batch_size=8, nu
     vocab_table = utils.create_vocab_table(vocab_filename)
 
     dataset = utils.process_dataset(
-        dataset, vocab_table, utils.SOS, utils.EOS, batch_size, num_epochs)
+        dataset, vocab_table, utils.SOS, utils.EOS, batch_size, num_epochs, is_infer=True)
 
     return dataset
 

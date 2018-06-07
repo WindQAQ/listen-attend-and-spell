@@ -29,14 +29,17 @@ def read_dataset(filename, num_channels=39):
     return dataset
 
 
-def process_dataset(dataset, vocab_table, sos, eos, batch_size=8, num_epochs=1, num_parallel_calls=32, random_seed=42):
+def process_dataset(dataset, vocab_table, sos, eos, batch_size=8, num_epochs=1, num_parallel_calls=32, is_infer=False):
 
     output_buffer_size = batch_size * 1000
 
     sos_id = tf.cast(vocab_table.lookup(tf.constant(sos)), tf.int32)
     eos_id = tf.cast(vocab_table.lookup(tf.constant(eos)), tf.int32)
 
-    dataset = dataset.repeat(num_epochs).shuffle(output_buffer_size)
+    dataset = dataset.repeat(num_epochs)
+
+    if not is_infer:
+        dataset = dataset.shuffle(output_buffer_size)
 
     dataset = dataset.map(
         lambda inputs, labels: (inputs,
