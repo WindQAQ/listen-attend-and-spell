@@ -52,6 +52,8 @@ def main(args):
     hparams = utils.create_hparams(
         args, vocab_size, utils.SOS_ID, utils.EOS_ID)
 
+    hparams.decoder.set_hparam('beam_width', args.beam_width)
+
     model = tf.estimator.Estimator(
         model_fn=las_model_fn,
         config=config,
