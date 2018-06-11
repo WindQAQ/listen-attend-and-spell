@@ -43,7 +43,7 @@ def parse_args():
                         help='sampling probabilty of decoder during training')
     parser.add_argument('--attention_type', type=str, default='luong', choices=['luong', 'custom'],
                         help='type of attention mechanism')
-    parser.add_argument('--attention_layer_size', type=int, nargs='+',
+    parser.add_argument('--attention_layer_size', type=int,
                         help='size of attention layer, see tensorflow.contrib.seq2seq.AttentionWrapper'
                              'for more details')
     parser.add_argument('--bottom_only', action='store_true',
