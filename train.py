@@ -41,7 +41,7 @@ def parse_args():
                         help='embedding size of target vocabulary, if 0, one hot encoding is applied')
     parser.add_argument('--sampling_probability', type=float, default=0.1,
                         help='sampling probabilty of decoder during training')
-    parser.add_argument('--attention_type', type=str, default='luong', choices=['luong', 'custom'],
+    parser.add_argument('--attention_type', type=str, default='luong', choices=['luong', 'bahdanau', 'custom'],
                         help='type of attention mechanism')
     parser.add_argument('--attention_layer_size', type=int,
                         help='size of attention layer, see tensorflow.contrib.seq2seq.AttentionWrapper'

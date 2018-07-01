@@ -140,7 +140,12 @@ def attend(encoder_outputs,
 
     memory = encoder_outputs
 
-    attention_fn = tf.contrib.seq2seq.LuongAttention if hparams.attention_type == 'luong' else CustomAttention
+    if hparams.attention_type == 'luong':
+        attention_fn = tf.contrib.seq2seq.LuongAttention
+    elif hparams.attention_type == 'bahdanau':
+        attention_fn = tf.contrib.seq2seq.BahdanauAttention
+    elif hparams.attention_type == 'custom':
+        attention_fn = CustomAttention
 
     attention_mechanism = attention_fn(
         hparams.num_units, memory, source_sequence_length)
