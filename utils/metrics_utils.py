@@ -1,13 +1,14 @@
 import tensorflow as tf
 
 __all__ = [
-    'edit_distance',        
+    'edit_distance',
 ]
 
 
 def dense_to_sparse(tensor, eos_id, merge_repeated=True):
     if merge_repeated:
-        added_values = tf.cast(tf.fill((tf.shape(tensor)[0], 1), eos_id), tensor.dtype)
+        added_values = tf.cast(
+            tf.fill((tf.shape(tensor)[0], 1), eos_id), tensor.dtype)
 
         # merge consecutive values
         concat_tensor = tf.concat((tensor, added_values), axis=-1)

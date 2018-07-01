@@ -44,4 +44,4 @@ def get_iterator(dataset, vocab_table, sos, eos, batch_size=8, num_parallel_call
         padding_values=(0.0, eos_id, eos_id, 0, 0))
 
     return dataset
-    #return dataset.make_initializable_iterator()
+    # return dataset.make_initializable_iterator()

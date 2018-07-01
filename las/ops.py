@@ -72,6 +72,7 @@ def pyramidal_bilstm(inputs,
             outputs = tf.concat(outputs, -1)
 
             if layer != 0:
-                outputs, sequence_length = pyramidal_stack(outputs, sequence_length)
+                outputs, sequence_length = pyramidal_stack(
+                    outputs, sequence_length)
 
     return (outputs, sequence_length), state
