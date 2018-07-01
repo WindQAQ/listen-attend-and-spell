@@ -194,14 +194,17 @@ def speller(encoder_outputs,
             encoder_state, multiplier=beam_width)
         batch_size = batch_size * beam_width
 
-    if hparams.embedding_size != 0:
-        target_embedding = tf.get_variable(
-            'target_embedding', [
-                hparams.target_vocab_size, hparams.embedding_size],
-            dtype=tf.float32, initializer=tf.contrib.layers.xavier_initializer())
-    else:
-        target_embedding = tf.one_hot(
-            list(range(hparams.target_vocab_size)), hparams.target_vocab_size)
+    def embedding_fn(ids):
+        # pass callable object to avoid OOM when using one-hot encoding
+        if hparams.embedding_size != 0:
+            target_embedding = tf.get_variable(
+                'target_embedding', [
+                    hparams.target_vocab_size, hparams.embedding_size],
+                dtype=tf.float32, initializer=tf.contrib.layers.xavier_initializer())
+
+            return tf.nn.embedding_lookup(target_embedding, ids)
+        else:
+            return tf.one_hot(ids, hparams.target_vocab_size)
 
     decoder_cell = attend(
         encoder_outputs, source_sequence_length, mode, hparams)
@@ -222,13 +225,12 @@ def speller(encoder_outputs,
         source_sequence_length) if mode != tf.estimator.ModeKeys.TRAIN else None
 
     if mode == tf.estimator.ModeKeys.TRAIN:
-        decoder_inputs = tf.nn.embedding_lookup(
-            target_embedding, decoder_inputs)
+        decoder_inputs = embedding_fn(decoder_inputs)
 
         if hparams.sampling_probability > 0.0:
             helper = tf.contrib.seq2seq.ScheduledEmbeddingTrainingHelper(
                 decoder_inputs, target_sequence_length,
-                target_embedding, hparams.sampling_probability)
+                embedding_fn, hparams.sampling_probability)
         else:
             helper = tf.contrib.seq2seq.TrainingHelper(
                 decoder_inputs, target_sequence_length)
@@ -242,7 +244,7 @@ def speller(encoder_outputs,
 
         decoder = tf.contrib.seq2seq.BeamSearchDecoder(
             cell=decoder_cell,
-            embedding=target_embedding,
+            embedding=embedding_fn,
             start_tokens=start_tokens,
             end_token=hparams.eos_id,
             initial_state=initial_state,
@@ -252,7 +254,7 @@ def speller(encoder_outputs,
         start_tokens = tf.fill([batch_size], hparams.sos_id)
 
         helper = tf.contrib.seq2seq.GreedyEmbeddingHelper(
-            target_embedding, start_tokens, hparams.eos_id)
+            embedding_fn, start_tokens, hparams.eos_id)
 
         decoder = tf.contrib.seq2seq.BasicDecoder(
             decoder_cell, helper, initial_state, output_layer=projection_layer)
