@@ -12,7 +12,7 @@ REPO_VCTK_DIR=./vctk
 
 echo All data and model will be saved at $ROOT_DIR
 
-if [ -e $VCTK_TAR_FILE ]
+if [ ! -e $VCTK_TAR_FILE ]
 then
     echo Downloading dataset ...
     wget $VCTK_URL -O $VCTK_TAR_FILE
