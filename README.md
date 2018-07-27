@@ -52,7 +52,7 @@ The following figures show the results on TIMIT dataset (4620 training sentence 
 ![training curve](images/curve.png)
 
 ### VCTK
-[VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) is also been used as benchmark. Simply run `./run-vctk.sh` to process data and train the model. Note that since VCTK has no train-test split, the first 90 speakers are chose as the training set, and remaining are the testing set. **For more details about how to extract audio features and create TFRecord files, please refer to `vctk/`**.
+[VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) is also used as benchmark. Simply run `./run-vctk.sh` to process data and train the model. Note that since VCTK has no train-test split, the first 90 speakers are chose as the training set, and remaining are the testing set. **For more details about how to extract audio features and create TFRecord files, please refer to `vctk/`**.
 
 ## References
 
