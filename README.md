@@ -46,9 +46,13 @@ Simply run `python3 train.py --train TRAIN_TFRECORD --vocab VOCAB_TABLE --model_
 With the help of tensorflow estimator API, you can launch tensorboard by `tensorboard --logdir=MODEL_DIR`  to see the training procedure.
 
 ## Result
+### TIMIT
 The following figures show the results on TIMIT dataset (4620 training sentence and 1680 testing sentence). If you prepare the TFRecord files of TIMIT, you can run the model with `misc/hparams.json` (put it into your model directory) to produce the similar results. Note that, customarily, we map phones into 39 phone set while evaluating TIMIT dataset, and thus, the edit distance evaluated down below is based on 39 phone set.
 
 ![training curve](images/curve.png)
+
+### VCTK
+[VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) is also been used as benchmark. Simply run `./run-vctk.sh` to process data and train the model. Note that since VCTK has no train-test split, the first 90 speakers are chose as the training set, and remaining are the testing set. **For more details about how to extract audio features and create TFRecord files, please refer to `vctk/`**.
 
 ## References
 
