@@ -226,8 +226,11 @@ def speller(encoder_outputs,
     else:
         initial_state = decoder_cell.zero_state(batch_size, tf.float32)
 
-    maximum_iterations = tf.reduce_max(
-        source_sequence_length) if mode != tf.estimator.ModeKeys.TRAIN else None
+    maximum_iterations = None
+    if mode != tf.estimator.ModeKeys.TRAIN:
+        max_source_length = tf.reduce_max(source_sequence_length)
+        maximum_iterations = tf.to_int32(tf.round(tf.to_float(
+            max_source_length) * hparams.decoding_length_factor))
 
     if mode == tf.estimator.ModeKeys.TRAIN:
         decoder_inputs = embedding_fn(decoder_inputs)

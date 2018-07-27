@@ -46,6 +46,7 @@ def get_default_hparams():
         eos_id=2,
         bottom_only=False,
         pass_hidden_state=False,
+        decoding_length_factor=1.0,
         attention_type='luong',
         attention_layer_size=None,
         beam_width=0,
@@ -84,10 +85,9 @@ def create_hparams(args, target_vocab_size, sos_id=1, eos_id=2):
             else:
                 hparams.set_hparam(name, value)
 
-    if not os.path.exists(hparams_file):
-        if not os.path.exists(args.model_dir):
-            os.makedirs(args.model_dir)
-        hparams.save_to_file(hparams_file)
+    if not os.path.exists(args.model_dir):
+        os.makedirs(args.model_dir)
+    hparams.save_to_file(hparams_file)
 
     return get_encoder_decoder_hparams(hparams)
 
