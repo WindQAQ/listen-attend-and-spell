@@ -74,7 +74,6 @@ def process_speakers(speakers, args):
             name, x = extract_mfcc(wav_filepath)
             _name, y = parse_trans(txt_filepath)
 
-
             if name is not None and _name is not None:
                 features[name] = x
                 labels[name] = y
@@ -88,7 +87,7 @@ def main(args):
     assert len(speakers) == 108, "Number of speakers doesn't match"
 
     # use first 90 speakers as training, remaining for testing
-    train_speakers, test_speakers = speakers[:95], speakers[95:]
+    train_speakers, test_speakers = speakers[:90], speakers[90:]
 
     print('Process training')
     features, labels = process_speakers(train_speakers, args)
